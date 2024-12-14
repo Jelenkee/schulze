@@ -8,9 +8,9 @@ export const server = {
             candidates: z.array(z.string())
         }),
         handler: async (input) => {
-            return {
-                id: "ulid"
-            }
+            console.log(input);
+
+            return "ulid"
         }
     }),
     submitVote: defineAction({
