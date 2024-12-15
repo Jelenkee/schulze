@@ -11,13 +11,6 @@
         return candidates.filter((c) => c).length > 1 && Boolean(title);
     });
 
-    function change() {
-        const last = candidates[candidates.length - 1];
-        if (last == null || last !== "") {
-            candidates.push("");
-        }
-    }
-
     function enter(event: KeyboardEvent, index: number) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -30,13 +23,13 @@
             //toast?
             return;
         }
-        candidates=[...candidates.filter(Boolean),""];
+        candidates = candidates.filter(Boolean);
         if (!title) {
             titleNode.setAttribute("required", "true");
             return;
         }
         loading = true;
-        actions.createVote({ title, candidates }).then((res) => {
+        actions.createSurvey({ title, candidates }).then((res) => {
             loading = false;
             if (res.error) {
                 return console.error(res.error);
@@ -48,6 +41,10 @@
     $effect(() => {
         if (candidates == null || candidates.length === 0) {
             candidates = [""];
+        }
+        const last = candidates[candidates.length - 1];
+        if (last == null || last !== "") {
+            candidates.push("");
         }
     });
 
@@ -79,7 +76,6 @@
                     class="input"
                     type="text"
                     bind:value={candidates[i]}
-                    oninput={change}
                     onkeypress={(event) => enter(event, i)}
                 />
                 {#if i > 0 && candidate}
