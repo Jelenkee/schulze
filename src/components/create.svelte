@@ -21,10 +21,6 @@
     }
 
     function submit() {
-        if (!submittable) {
-            //toast?
-            return;
-        }
         candidates = candidates.filter(Boolean);
         if (!title) {
             titleNode.setAttribute("required", "true");

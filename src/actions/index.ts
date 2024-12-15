@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { USER_COOKIE } from '../lib/constants.ts';
+import { USER_ID_COOKIE } from '../lib/constants.ts';
 import { createSurvey, createVote, getSurvey } from '../lib/db.ts';
 
 export const server = {
@@ -22,7 +22,7 @@ export const server = {
             userName: z.string().min(3).max(30),
         }),
         handler: async (input, context) => {
-            const cookie = context.cookies.get(USER_COOKIE);
+            const cookie = context.cookies.get(USER_ID_COOKIE);
             if (cookie == null) {
                 throw new ActionError({
                     code: "BAD_REQUEST",

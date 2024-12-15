@@ -1,4 +1,4 @@
-import { ActionError, ActionInputError, isActionError } from "astro:actions";
+import { ActionError, ActionInputError } from "astro:actions";
 import { toast } from "@zerodevx/svelte-toast";
 
 export function handleError(error: Error) {

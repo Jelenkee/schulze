@@ -1,10 +1,29 @@
 ---
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
+import Vote from "../../components/vote.svelte";
+import { getSurvey } from "../../lib/db.ts";
+import { ADJECTIVES, ANIMALS } from "../../lib/constants.ts";
+import { sample } from "es-toolkit";
 
 const { id } = Astro.params;
+const survey = await getSurvey(id as string);
+const name = survey?.name;
+const defaultUserName = `${sample(ADJECTIVES)}-${sample(ANIMALS)}`;
 ---
 
 <Layout>
-	vote {id}
+	<h2 class="text-xl mb-3">{name}</h2>
+	{
+		(survey?.candidates ?? []).length > 0 ? (
+			<Vote
+				{id}
+				{defaultUserName}
+				candidates={survey?.candidates ?? []}
+				client:only
+			/>
+		) : (
+			<h2>404</h2>
+		)
+	}
 </Layout>

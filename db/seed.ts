@@ -1,6 +1,5 @@
-import { db } from 'astro:db';
 
-// https://astro.build/db/seed
 export default async function seed() {
-	// TODO
+	//await actions.createSurvey({ title: "Character", candidates: ["Bronya", "Welt", "Kafka", "Lynx"] });
+	//await actions.createSurvey({ title: "Urlaub", candidates: ["Teneriffa", "Wolfsburg", "Emden", "Wutai"] });
 }
