@@ -1,26 +1,20 @@
-import { and, db, eq, Survey, Vote, pgTable } from "drizzle-orm/pg-core";
+import { bigserial, index, pgTable, serial, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
 
+export const Survey = pgTable("surveys", {
+    id: varchar({ length: 128 }).primaryKey(),
+    name: text().notNull(),
+    candidates: text().notNull(),
+    createdAt: timestamp().defaultNow().notNull(),
+}, t => [])
 
-
-export const Survey = pgTable({
-    columns: {
-      id: column.text({ primaryKey: true }),
-      name: column.text(),
-      candidates: column.json(),
-      createdAt: column.date({ default: NOW }),
-    }
-  })
-  
-  export const Vote = defineTable({
-    columns: {
-      surveyId: column.text({ references: () => Survey.columns.id }),
-      userId: column.text(),
-      userName: column.text(),
-      candidates: column.json(),
-    },
-    indexes: [
-      { on: "surveyId" },
-      { on: ["surveyId", "userId"], unique: true }
-    ]
-  })
+export const Vote = pgTable("votes", {
+    id: bigserial({ mode: "number" }).primaryKey(),
+    surveyId: varchar({ length: 128 }).notNull().references(() => Survey.id, { onDelete: "cascade" }),
+    userId: varchar({ length: 128 }).notNull(),
+    userName: text().notNull(),
+    candidates: text().notNull(),
+}, t => [
+     index().on(t.surveyId),
+     uniqueIndex().on(t.surveyId, t.userId),
+    ])

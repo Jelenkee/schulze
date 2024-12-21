@@ -1,20 +1,24 @@
-import { db, eq, Survey, Vote } from "astro:db";
+import { drizzle } from "drizzle-orm/postgres-js";
 import { ulid } from "ulid";
+import { Survey, Vote } from "./schema.ts";
+import { eq } from "drizzle-orm";
+
+const db = drizzle(process.env.PG_URL ?? "<empty>")
 
 export type Survey2 = Omit<typeof Survey.$inferSelect, "candidates"> & { candidates: string[] }
 export type Vote2 = Omit<typeof Vote.$inferSelect, "candidates" | "surveyId"> & { candidates: number[] }
 
 export async function createSurvey(name: string, candidates: string[]): Promise<string> {
     const id = ulid();
-    await db.insert(Survey).values({ id, name, candidates });
+    await db.insert(Survey).values({ id, name, candidates:JSON.stringify(candidates) });
     console.log(`Created survey ${id} (${name})`);
     return id;
 }
 
 export async function createVote(surveyId: string, userId: string, userName: string, candidates: number[]) {
-    await db.insert(Vote).values({ surveyId, userId, userName, candidates }).onConflictDoUpdate({
+    await db.insert(Vote).values({ surveyId, userId, userName, candidates:JSON.stringify(candidates) }).onConflictDoUpdate({
         target: [Vote.surveyId, Vote.userId],
-        set: { userName, candidates }
+        set: { userName, candidates:JSON.stringify(candidates) }
     });
     console.log(`Submitted vote from ${userId} (${userName}) for survey ${surveyId}`);
 }
@@ -35,4 +39,5 @@ export async function getSurveyResult(surveyId: string): Promise<{ survey: Surve
         votes: resultSet.map(r => r.Vote as Vote2)
     }
 }
+
 
