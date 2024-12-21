@@ -28,13 +28,16 @@
         }
         loading = true;
         id = "";
-        actions.createSurvey({ title, candidates }).then((res) => {
-            loading = false;
-            if (res.error) {
-                return handleError(res.error);
-            }
-            id = res.data;
-        });
+        actions
+            .createSurvey({ title, candidates })
+            .then((res) => {
+                if (res.error) {
+                    return handleError(res.error);
+                }
+                id = res.data;
+            })
+            .catch((e) => handleError(e instanceof Error ? e : new Error(e)))
+            .finally(() => (loading = false));
     }
 
     $effect(() => {
@@ -98,7 +101,7 @@
     {#if id}
         <div class="flex flex-nowrap items-center gap-1">
             <div
-                class="i-material-symbols-content-copy hover:bg-gray-6 text-xl"
+                class="i-material-symbols-content-copy hover:bg-gray-6 text-xl cursor-pointer"
                 onclick={() => {
                     toast.push("Copied URL");
                     window.navigator.clipboard.writeText(voteURL);

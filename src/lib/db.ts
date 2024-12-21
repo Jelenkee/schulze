@@ -1,7 +1,8 @@
 import { db, eq, Survey, Vote } from "astro:db";
 import { ulid } from "ulid";
 
-type Survey2 = Omit<typeof Survey.$inferSelect, "candidates"> & { candidates: string[] }
+export type Survey2 = Omit<typeof Survey.$inferSelect, "candidates"> & { candidates: string[] }
+export type Vote2 = Omit<typeof Vote.$inferSelect, "candidates" | "surveyId"> & { candidates: number[] }
 
 export async function createSurvey(name: string, candidates: string[]): Promise<string> {
     const id = ulid();
@@ -23,8 +24,15 @@ export async function getSurvey(surveyId: string): Promise<Survey2 | undefined> 
     return resultSet[0] as Survey2;
 }
 
-export async function getSurveyResult(surveyId: string) {
-    const resultSet = await db.select().from(Survey).innerJoin(Vote, eq(Survey.id, Vote.surveyId));
-    // TODO
+export async function getSurveyResult(surveyId: string): Promise<{ survey: Survey2, votes: Vote2[] } | undefined> {
+    const resultSet = await db.select().from(Survey).leftJoin(Vote,eq(Survey.id, Vote.surveyId)).where( eq(Survey.id, surveyId));
+    if (!resultSet.length) {
+        return;
+    }
+    
+    return {
+        survey: resultSet[0].Survey as Survey2,
+        votes: resultSet.map(r => r.Vote as Vote2)
+    }
 }
 

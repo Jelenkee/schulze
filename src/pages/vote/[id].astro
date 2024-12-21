@@ -8,14 +8,14 @@ import { sample } from "es-toolkit";
 
 const { id } = Astro.params;
 const survey = await getSurvey(id as string);
-const name = survey?.name;
+const name = survey?.name ?? 404;
 const defaultUserName = `${sample(ADJECTIVES)}-${sample(ANIMALS)}`;
 ---
 
-<Layout>
+<Layout title={name}>
 	<h2 class="text-xl mb-3">{name}</h2>
 	{
-		(survey?.candidates ?? []).length > 0 ? (
+		survey ? (
 			<Vote
 				{id}
 				{defaultUserName}

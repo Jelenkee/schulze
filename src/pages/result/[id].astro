@@ -1,10 +1,72 @@
 ---
 export const prerender = false;
+import { memoize } from "es-toolkit";
 import Layout from "../../layouts/Layout.astro";
+import { getSurveyResult, type Vote2 } from "../../lib/db.ts";
 
 const { id } = Astro.params;
+const result = await getSurveyResult(id as string);
+const name = result?.survey.name ?? 404;
+const obj = JSON.stringify(result, null, 2);
+
+const p: Map<string, number> = new Map();
+const votes = result?.votes ?? [];
+const memoD = d;
+function d(i: number, j: number): number {
+	const e = votes.filter(
+		(v) => v.candidates.indexOf(i) < v.candidates.indexOf(j),
+	).length;
+	console.log(i, j, e);
+
+	return e;
+}
+
+function key(i: number, j: number) {
+	return `${i}_${j}`;
+}
+for (let i = 0; i < votes.length; i++) {
+	for (let j = 0; j < votes.length; j++) {
+		if (i != j) {
+			if (memoD(i, j) > memoD(j, i)) {
+				p.set(key(i, j), memoD(i, j));
+			} else {
+				p.set(key(i, j), 0);
+			}
+		}
+	}
+}
+for (let i = 0; i < votes.length; i++) {
+	for (let j = 0; j < votes.length; j++) {
+		if (i != j) {
+			for (let k = 0; k < votes.length; k++) {
+				if (i != k && j != k) {
+					p.set(
+						key(j, k),
+						Math.max(
+							p.get(key(j, k)) ?? 0,
+							Math.min(
+								p.get(key(j, i)) ?? 0,
+								p.get(key(i, k)) ?? 0,
+							),
+						),
+					);
+				}
+			}
+		}
+	}
+}
+console.log(p);
 ---
 
-<Layout>
-	result {id}
+<Layout title={name}>
+	<h2 class="text-xl mb-3">{name}</h2>
+	{
+		result ? (
+			<pre>
+				<code> {obj}</code>
+			</pre>
+		) : (
+			<h2>404</h2>
+		)
+	}
 </Layout>

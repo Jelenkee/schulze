@@ -9,6 +9,7 @@
     let pairList: { id: number; candy: string }[] = $state(
         (candidates as string[]).map((e, i) => ({ id: i, candy: e })),
     );
+    let resultURL: string = $derived(`${window.location.origin}/result/${id}`);
     let ids = $derived(pairList.map((e) => e.id));
     let loading: boolean = $state(false);
     let userName: string = $state(
@@ -24,11 +25,12 @@
         actions
             .submitVote({ surveyId: id, candidates: ids, userName })
             .then((res) => {
-                loading = false;
                 if (res.error) {
                     return handleError(res.error);
                 }
-            });
+            })
+            .catch((e) => handleError(e instanceof Error ? e : new Error(e)))
+            .finally(() => (loading = false));
     }
 
     $effect(() => {
@@ -42,6 +44,7 @@
         <input class="input p-1" type="text" bind:value={userName} />
     </div>
     <div
+        class="my-4"
         use:dragHandleZone={{ items: pairList, flipDurationMs: duration }}
         onconsider={handle}
         onfinalize={handle}
@@ -49,7 +52,7 @@
         {#each pairList as pair (pair.id)}
             <div
                 animate:flip={{ duration: duration }}
-                class="flex flex-nowrap gap-2 items-center bg-white p-1 mb-1"
+                class="flex flex-nowrap gap-2 items-center bg-white p-1 mb-2"
             >
                 <div
                     use:dragHandle
@@ -64,6 +67,13 @@
         {#if loading}
             <div class="i-line-md-loading-loop text-xl"></div>
         {/if}
+    </div>
+    <div>
+        Results: <a
+        class="text-blue-700 hover:underline"
+        href={resultURL}
+        target="_blank">{resultURL}</a
+    >
     </div>
 </div>
 
