@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "npx drizzle-kit push && astro dev",
+    "dev": "docker compose up -d && npx drizzle-kit push && astro dev",
     "build": "npx drizzle-kit push && astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -24,7 +24,6 @@
     "@iconify-json/line-md": "^1.2.4",
     "@iconify-json/material-symbols": "^1.2.11",
     "@unocss/preset-icons": "^0.65.1",
-    "@vercel/postgres": "^0.10.0",
     "drizzle-kit": "^0.30.1",
     "pg": "^8.13.1",
     "unocss": "^0.65.1"

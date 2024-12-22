@@ -1,5 +1,4 @@
 import { bigserial, index, pgTable, serial, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
-import { drizzle } from "drizzle-orm/postgres-js";
 
 export const Survey = pgTable("surveys", {
     id: varchar({ length: 128 }).primaryKey(),
@@ -15,6 +14,6 @@ export const Vote = pgTable("votes", {
     userName: text().notNull(),
     candidates: text().notNull(),
 }, t => [
-     index().on(t.surveyId),
-     uniqueIndex().on(t.surveyId, t.userId),
-    ])
+    index().on(t.surveyId),
+    uniqueIndex().on(t.surveyId, t.userId),
+])
