@@ -7,7 +7,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const response = await next();
 
     if (cookieId == null) {
-        response.headers.append("Set-Cookie", `${USER_ID_COOKIE}=${ulid()}; HttpOnly; Secure`)
+        response.headers.append("Set-Cookie", `${USER_ID_COOKIE}=${ulid()}; HttpOnly; Secure; Path=/`)
     }
     return response;
 });

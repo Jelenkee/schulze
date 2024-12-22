@@ -3,8 +3,10 @@
     import { dragHandle, dragHandleZone } from "svelte-dnd-action";
     import { flip } from "svelte/animate";
     import { handleError } from "../lib/client.ts";
+
     const duration = 200;
     const USERNAME_KEY = "username";
+
     let { id, candidates, defaultUserName } = $props();
     let pairList: { id: number; candy: string }[] = $state(
         (candidates as string[]).map((e, i) => ({ id: i, candy: e })),
@@ -70,10 +72,10 @@
     </div>
     <div>
         Results: <a
-        class="text-blue-700 hover:underline"
-        href={resultURL}
-        target="_blank">{resultURL}</a
-    >
+            class="text-blue-700 hover:underline"
+            href={resultURL}
+            target="_blank">{resultURL}</a
+        >
     </div>
 </div>
 
